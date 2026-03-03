@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,17 +14,25 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <ul className="hidden md:flex items-center gap-6 lg:gap-10 text-[14px] lg:text-[15px] font-medium text-white/80">
-          <li className="cursor-pointer hover:text-white transition-colors duration-300">
-            Home
+          <li>
+            <Link to="/" className="cursor-pointer hover:text-white transition-colors duration-300">
+              Home
+            </Link>
           </li>
-          <li className="cursor-pointer hover:text-white transition-colors duration-300">
-            Shop
+          <li>
+            <Link to="/shop" className="cursor-pointer hover:text-white transition-colors duration-300">
+              Shop
+            </Link>
           </li>
-          <li className="cursor-pointer hover:text-white transition-colors duration-300">
-            Categories
+          <li>
+            <Link to="/categories" className="cursor-pointer hover:text-white transition-colors duration-300">
+              Categories
+            </Link>
           </li>
-          <li className="cursor-pointer hover:text-white transition-colors duration-300">
-            About
+          <li>
+            <Link to="/about" className="cursor-pointer hover:text-white transition-colors duration-300">
+              About
+            </Link>
           </li>
         </ul>
 
@@ -38,9 +47,12 @@ const Navbar = () => {
               className="bg-transparent outline-none text-sm text-white placeholder-white/50 w-full"
             />
           </div>
-          <span className="hidden md:inline cursor-pointer hover:text-white transition-colors duration-300">
+          <Link
+            to="/cart"
+            className="hidden md:inline cursor-pointer hover:text-white transition-colors duration-300"
+          >
             🛒 (2)
-          </span>
+          </Link>
           <span className="hidden md:inline cursor-pointer hover:text-white transition-colors duration-300">
             👤
           </span>
@@ -64,15 +76,17 @@ const Navbar = () => {
 
           {/* Mobile Links */}
           <div className="space-y-4 text-[15px]">
-            <div className="hover:text-white cursor-pointer">Home</div>
-            <div className="hover:text-white cursor-pointer">Shop</div>
-            <div className="hover:text-white cursor-pointer">Categories</div>
-            <div className="hover:text-white cursor-pointer">About</div>
+            <Link to="/" onClick={() => setIsOpen(false)} className="block hover:text-white cursor-pointer">Home</Link>
+            <Link to="/shop" onClick={() => setIsOpen(false)} className="block hover:text-white cursor-pointer">Shop</Link>
+            <Link to="/categories" onClick={() => setIsOpen(false)} className="block hover:text-white cursor-pointer">Categories</Link>
+            <Link to="/about" onClick={() => setIsOpen(false)} className="block hover:text-white cursor-pointer">About</Link>
           </div>
 
           {/* Mobile Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-white/10 text-lg">
-            <span className="cursor-pointer">🛒 (2)</span>
+            <Link to="/cart" onClick={() => setIsOpen(false)} className="cursor-pointer">
+              🛒 (2)
+            </Link>
             <span className="cursor-pointer">👤 Account</span>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const dummyProducts = [
   {
@@ -117,9 +118,10 @@ const ShopLayout = () => {
           <div className="lg:w-3/4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {dummyProducts.map((product) => (
-                <div
+                <Link
+                  to={`/products/${product.id}`}
                   key={product.id}
-                  className="group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-white transition-all duration-300 hover:-translate-y-1"
+                  className="group bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-white transition-all duration-300 hover:-translate-y-1 block"
                 >
                   <div className="relative w-full aspect-square overflow-hidden">
                     <img
@@ -150,7 +152,7 @@ const ShopLayout = () => {
                       Add to Cart
                     </button>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

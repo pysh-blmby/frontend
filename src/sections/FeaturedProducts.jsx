@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const dummyProducts = [
   {
@@ -49,9 +50,10 @@ const FeaturedProducts = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {dummyProducts.map((product) => (
-            <div
+            <Link
+              to={`/products/${product.id}`}
               key={product.id}
-              className="bg-zinc-900 rounded-xl overflow-hidden group cursor-pointer"
+              className="bg-zinc-900 rounded-xl overflow-hidden group cursor-pointer block"
             >
               {/* Product Image */}
               <div className="overflow-hidden">
@@ -75,7 +77,7 @@ const FeaturedProducts = () => {
                   Add to Cart
                 </button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
