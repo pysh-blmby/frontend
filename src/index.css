@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+body {
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
