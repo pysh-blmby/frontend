@@ -1,27 +1,28 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const navItems = [
-  { name: "Dashboard", icon: "📊" },
-  { name: "Products", icon: "🛍️" },
-  { name: "Categories", icon: "📂" },
-  { name: "Orders", icon: "📦" },
-  { name: "Coupons", icon: "🎟️" },
-  { name: "Customers", icon: "👥" },
-  { name: "Analytics", icon: "📈" },
-  { name: "Settings", icon: "⚙️" },
+  { name: "Dashboard", icon: "📊", path: "/admin" },
+  { name: "Products", icon: "🛍️", path: "/admin/products" },
+  { name: "Categories", icon: "📂", path: "/admin/categories" },
+  { name: "Orders", icon: "📦", path: "/admin/orders" },
+  { name: "Coupons", icon: "🎟️", path: "/admin/coupons" },
+  { name: "Customers", icon: "👥", path: "/admin/customers" },
+  { name: "Analytics", icon: "📈", path: "/admin/analytics" },
+  { name: "Settings", icon: "⚙️", path: "/admin/settings" },
 ];
 
 const AdminSideSection = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
-    <div className={`flex min-h-screen bg-linear-to-br from-zinc-950 via-black to-zinc-900 text-white relative ${mobileOpen ? "overflow-hidden h-screen" : "overflow-hidden"}`}>
+    <div className="flex h-screen bg-linear-to-br from-zinc-950 via-black to-zinc-900 text-white relative overflow-hidden">
       
 
       {/* SIDEBAR */}
       <aside
         className={`
           fixed md:relative top-0 left-0 h-screen
-          w-64
+          w-56 md:w-60 lg:w-64
           bg-black/70 backdrop-blur-xl
           text-white flex flex-col
           border-r border-white/10 shadow-2xl
@@ -56,14 +57,21 @@ const AdminSideSection = ({ children }) => {
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2 pb-10">
           {navItems.map((item, index) => (
-            <button
+            <NavLink
+              to={item.path}
               onClick={() => setMobileOpen(false)}
               key={index}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-300 hover:translate-x-1"
+              className={({ isActive }) =>
+                `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 hover:translate-x-1 ${
+                  isActive
+                    ? "bg-white/10 text-white"
+                    : "text-gray-400 hover:bg-white/10 hover:text-white"
+                }`
+              }
             >
               <span className="text-lg">{item.icon}</span>
               {item.name}
-            </button>
+            </NavLink>
           ))}
         </nav>
 

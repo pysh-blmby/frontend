@@ -4,7 +4,13 @@ import Home from './pages/Home'
 import Shop from './pages/Shop'
 import ProductPage from './pages/ProductPage'
 import CartPage from './pages/CartPage'
+import AdminPanel from './pages/AdminPanel'
 import AdminDashboard from './pages/AdminDashboard'
+import AdminProductList from './pages/AdminProductList'
+import AdminProduct from './pages/AdminProduct'
+import AdminCatogeries from './pages/AdminCatogeries'
+import AdminOrder from './pages/AdminOrder'
+import AdminSetting from './pages/AdminSetting'
 
 const App = () => {
   return (
@@ -14,7 +20,15 @@ const App = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/products/:id" element={<ProductPage />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminPanel />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProductList />} />
+          <Route path="product" element={<AdminProduct />} />
+          <Route path="categories" element={<AdminCatogeries />} />
+          <Route path="orders" element={<AdminOrder />} />
+          <Route path="settings" element={<AdminSetting />} />
+        </Route>
       </Routes>
     </Router>
   )
