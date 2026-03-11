@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const storeName = "StoreName"; // later fetch from store settings
   return (
     <nav className="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 pt-4">
       <div className="max-w-7xl mx-auto h-14 md:h-16 flex items-center justify-between bg-neutral-900/80 backdrop-blur-md border border-white/10 shadow-xl rounded-3xl px-4 sm:px-6 lg:px-10">
         
         {/* Logo / Company Name */}
         <div className="text-[22px] font-semibold tracking-wide text-white">
-          NovaStore
+          {storeName}
         </div>
 
         {/* Navigation Links */}
@@ -38,8 +39,8 @@ const Navbar = () => {
 
         {/* Action Icons */}
         <div className="flex items-center gap-3 md:gap-4 lg:gap-6 text-base lg:text-lg text-white/80 ml-auto md:ml-0">
-          {/* Search Input */}
-          <div className="flex items-center bg-neutral-800/70 border border-white/10 rounded-full px-3 sm:px-4 h-9 sm:h-10 w-28 sm:w-36 md:w-44 lg:w-64 xl:w-72 focus-within:border-purple-500 transition-all duration-300">
+          {/* Desktop Search Input */}
+          <div className="hidden md:flex items-center bg-neutral-800/70 border border-white/10 rounded-full px-3 sm:px-4 h-9 sm:h-10 w-28 sm:w-36 md:w-44 lg:w-64 xl:w-72 focus-within:border-purple-500 transition-all duration-300">
             <span className="text-white/60 mr-2">🔍</span>
             <input
               type="text"
@@ -47,15 +48,18 @@ const Navbar = () => {
               className="bg-transparent outline-none text-sm text-white placeholder-white/50 w-full"
             />
           </div>
+
+          {/* Mobile Search Icon */}
+          <button className="md:hidden text-lg hover:text-white transition-colors duration-300">
+            🔍
+          </button>
+
           <Link
             to="/cart"
             className="hidden md:inline cursor-pointer hover:text-white transition-colors duration-300"
           >
             🛒 (2)
           </Link>
-          <span className="hidden md:inline cursor-pointer hover:text-white transition-colors duration-300">
-            👤
-          </span>
         </div>
         {/* Mobile Search Icon */}
         {/* Hamburger */}
@@ -87,7 +91,6 @@ const Navbar = () => {
             <Link to="/cart" onClick={() => setIsOpen(false)} className="cursor-pointer">
               🛒 (2)
             </Link>
-            <span className="cursor-pointer">👤 Account</span>
           </div>
         </div>
       )}

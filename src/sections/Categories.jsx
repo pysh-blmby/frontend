@@ -1,33 +1,8 @@
 import React from "react";
 
-const dummyCategories = [
-  {
-    id: 1,
-    name: "Men",
-    image:
-      "https://images.unsplash.com/photo-1516822003754-cca485356ecb?q=80&w=800",
-  },
-  {
-    id: 2,
-    name: "Women",
-    image:
-      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800",
-  },
-  {
-    id: 3,
-    name: "Shoes",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800",
-  },
-  {
-    id: 4,
-    name: "Accessories",
-    image:
-      "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?q=80&w=800",
-  },
-];
-
-const Categories = () => {
+const Categories = ({ categoriesData }) => {
+  const categories = categoriesData?.categories || [];
+  
   return (
     <section className="w-full py-16 bg-zinc-950">
       <div className="max-w-300 mx-auto px-5">
@@ -35,7 +10,7 @@ const Categories = () => {
         {/* Section Heading */}
         <div className="text-center mb-12">
           <h2 className="text-3xl font-semibold mb-3 text-white">
-            Shop by Category
+            {categoriesData?.title}
           </h2>
           <p className="text-gray-400 text-sm">
             Discover products tailored to your style and needs
@@ -44,9 +19,9 @@ const Categories = () => {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {dummyCategories.map((category) => (
+          {categories.map((category) => (
             <div
-              key={category.id}
+              key={category._id}
               className="group relative rounded-xl overflow-hidden cursor-pointer bg-zinc-900"
             >
               {/* Image */}

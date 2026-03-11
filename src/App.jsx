@@ -11,6 +11,7 @@ import AdminProduct from './pages/AdminProduct'
 import AdminCatogeries from './pages/AdminCatogeries'
 import AdminOrder from './pages/AdminOrder'
 import AdminSetting from './pages/AdminSetting'
+import AdminHomepage from './pages/AdminHomepage'
 
 const App = () => {
   return (
@@ -28,6 +29,9 @@ const App = () => {
           <Route path="categories" element={<AdminCatogeries />} />
           <Route path="orders" element={<AdminOrder />} />
           <Route path="settings" element={<AdminSetting />} />
+          <Route path="homepage" element={<AdminHomepage />} />
+
+
         </Route>
       </Routes>
     </Router>
