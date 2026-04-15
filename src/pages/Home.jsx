@@ -35,7 +35,7 @@ const Home = () => {
       />
 
       <Categories 
-        categoriesData={homeData?.categories}
+        categoriesData={homeData?.categoriesSection}
       />
 
       <FeaturedProducts 

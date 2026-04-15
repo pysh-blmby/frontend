@@ -1,149 +1,376 @@
-import React from "react";
-import AdminSideSection from "../sections/AdminSideSection";
-import TopStatsAdmin from "../sections/TopStatsAdmin";
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import Navbar from '../sections/Navbar'
+import Footer from '../sections/Footer'
+import AdminSideSection from '../sections/AdminSideSection'
 
-const recentOrders = [
-  { id: "#ORD-231", customer: "Rahul Sharma", items: 2, total: "₹2,999", status: "Pending", date: "Today" },
-  { id: "#ORD-230", customer: "Aman Verma", items: 1, total: "₹1,499", status: "Shipped", date: "Today" },
-  { id: "#ORD-229", customer: "Neha Kapoor", items: 3, total: "₹4,200", status: "Delivered", date: "Yesterday" },
-];
+// Loader component for showing a loading spinner
+const Loader = () => (
+  <div className="flex items-center justify-center min-h-75">
+    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white"></div>
+  </div>
+)
 
-const lowStock = [
-  { name: "Black Hoodie", category: "Men", stock: 3 },
-  { name: "Running Shoes", category: "Footwear", stock: 2 },
-  { name: "Leather Wallet", category: "Accessories", stock: 4 },
-];
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3500'
 
 const AdminDashboard = () => {
-  return (
-    <section>
-    {/* Top Stats */}
-      <TopStatsAdmin />
+  const [stats, setStats] = useState(null)
+  const [recentOrders, setRecentOrders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-      {/* Quick Actions */}
-      <section className="mt-8">
-        <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+        const [statsRes, ordersRes] = await Promise.all([
+          fetch(`${API_BASE}/orders/admin/stats`),
+          fetch(`${API_BASE}/orders/admin/all?limit=5`)
+        ])
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <button className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-medium hover:bg-zinc-800 transition">
-            ➕ Add Product
-          </button>
-          <button className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-medium hover:bg-zinc-800 transition">
-            📂 Add Category
-          </button>
-          <button className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-medium hover:bg-zinc-800 transition">
-            📦 View Orders
-          </button>
-          <button className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm font-medium hover:bg-zinc-800 transition">
-            ⚙ Store Settings
-          </button>
-        </div>
-      </section>
+        if (!statsRes.ok) throw new Error('Failed to fetch stats')
+        if (!ordersRes.ok) throw new Error('Failed to fetch orders')
 
-      {/* Main Dashboard Grid */}
-      <section className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        const statsData = await statsRes.json()
+        const ordersData = await ordersRes.json()
 
-        {/* Recent Orders */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-          <h3 className="text-white font-semibold mb-4">Recent Orders</h3>
+        setStats(statsData.stats || {})
+        setRecentOrders(ordersData.orders || [])
+        setError('')
+      } catch (err) {
+        setError(err.message || 'Failed to load dashboard data')
+      } finally {
+        setLoading(false)
+      }
+    }
 
-          <div className="space-y-4">
-            {recentOrders.map((order, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-sm"
-              >
-                <div>
-                  <p className="text-white">{order.id}</p>
-                  <p className="text-zinc-400 text-xs">{order.customer}</p>
-                </div>
+    fetchDashboardData()
+  }, [])
 
-                <div className="text-zinc-400 hidden sm:block">
-                  {order.items} items
-                </div>
-
-                <div className="text-white">{order.total}</div>
-
-                <div
-                  className={`text-xs px-2 py-1 rounded ${
-                    order.status === "Pending"
-                      ? "bg-yellow-500/20 text-yellow-400"
-                      : order.status === "Shipped"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : "bg-green-500/20 text-green-400"
-                  }`}
-                >
-                  {order.status}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Low Stock */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
-          <h3 className="text-white font-semibold mb-4">Low Stock Alerts</h3>
-
-          <div className="space-y-4">
-            {lowStock.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-sm"
-              >
-                <div>
-                  <p className="text-white">{item.name}</p>
-                  <p className="text-zinc-400 text-xs">{item.category}</p>
-                </div>
-
-                <div className="text-red-400 text-xs">
-                  {item.stock} left
-                </div>
-
-                <button className="text-xs px-3 py-1 bg-zinc-800 rounded hover:bg-zinc-700">
-                  Edit
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </section>
-
-      {/* Recently Added Products */}
-      <section className="mt-10">
-        <h3 className="text-white font-semibold mb-4">Recently Added Products</h3>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[
-            { name: "Sneakers", price: "₹2,499", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff" },
-            { name: "Denim Jacket", price: "₹3,199", image: "https://images.unsplash.com/photo-1520975916090-3105956dac38" },
-            { name: "Leather Bag", price: "₹2,799", image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7" },
-            { name: "Running Shoes", price: "₹2,199", image: "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb" }
-          ].map(
-            (product, index) => (
-              <div
-                key={index}
-                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm hover:bg-zinc-800 transition"
-              >
-                <div className="bg-zinc-800 rounded-lg mb-3 overflow-hidden">
-                  <img
-                    src={`${product.image}?w=400`}
-                    alt={product.name}
-                    className="w-full h-32 object-cover"
-                  />
-                </div>
-
-                <p className="text-white font-medium">{product.name}</p>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-zinc-300 text-sm">{product.price}</p>
-                  <p className="text-zinc-500 text-xs">Edit</p>
-                </div>
-              </div>
-            )
+  const StatCard = ({ title, value, subtitle, icon, color = 'blue', trend }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-neutral-900 border border-white/10 rounded-xl p-6 hover:border-purple-500/40 hover:shadow-lg transition-all duration-300"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-white/60 text-sm font-medium mb-1">{title}</p>
+          <p className="text-3xl font-bold text-white mb-1">{value}</p>
+          {subtitle && <p className="text-white/50 text-sm">{subtitle}</p>}
+          {trend && (
+            <p className={`text-sm font-medium ${trend > 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {trend > 0 ? '↗' : '↘'} {Math.abs(trend)}% from last month
+            </p>
           )}
         </div>
-      </section></section>
-  );
-};
+        <div className={`text-4xl text-${color}-600`}>{icon}</div>
+      </div>
+    </motion.div>
+  )
 
-export default AdminDashboard;
+  const QuickActionCard = ({ title, description, icon, link, color = 'blue' }) => (
+    <motion.div
+      whileHover={{ scale: 1.02, y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      className="bg-neutral-900 border border-white/10 rounded-xl p-6 hover:border-purple-500/40 hover:shadow-lg transition-all duration-300 cursor-pointer"
+    >
+      <Link to={link} className="block">
+        <div className="flex items-center gap-4">
+          <div className={`text-3xl text-${color}-600`}>{icon}</div>
+          <div>
+            <h3 className="font-semibold text-white mb-1">{title}</h3>
+            <p className="text-white/60 text-sm">{description}</p>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  )
+
+  const getStatusColor = (status) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      processing: 'bg-blue-100 text-blue-800',
+      shipped: 'bg-purple-100 text-purple-800',
+      delivered: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800'
+    }
+    return colors[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center text-white">
+      <Loader />
+    </div>
+  )
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <div className="text-center">
+          <p className="text-red-600 font-semibold mb-2">Failed to load dashboard</p>
+          <p className="text-gray-500 text-sm">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen text-white">
+
+
+      <div className="flex gap-6 max-w-7xl mx-auto">
+
+        <div className="flex-1">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
+            <p className="text-white/60">Welcome back! Here's what's happening with your store today.</p>
+          </motion.div>
+
+          {/* Stats Grid */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
+            <StatCard
+              title="Total Revenue"
+              value={`$${(stats?.totalRevenue || 0).toLocaleString()}`}
+              subtitle="All time earnings"
+              icon="💰"
+              color="green"
+              trend={12.5}
+            />
+            <StatCard
+              title="Total Orders"
+              value={stats?.totalOrders || 0}
+              subtitle="All time orders"
+              icon="📦"
+              color="blue"
+              trend={8.2}
+            />
+            <StatCard
+              title="Pending Orders"
+              value={stats?.pendingOrders || 0}
+              subtitle="Awaiting processing"
+              icon="⏳"
+              color="yellow"
+            />
+            <StatCard
+              title="Delivered Orders"
+              value={stats?.deliveredOrders || 0}
+              subtitle="Successfully completed"
+              icon="✅"
+              color="green"
+              trend={15.3}
+            />
+          </motion.div>
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-8"
+          >
+            <h2 className="text-xl font-semibold text-white mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <QuickActionCard
+                title="Add Product"
+                description="Create new product listing"
+                icon="➕"
+                link="/admin/product"
+                color="blue"
+              />
+              <QuickActionCard
+                title="View Orders"
+                description="Manage customer orders"
+                icon="📦"
+                link="/admin/orders"
+                color="purple"
+              />
+              <QuickActionCard
+                title="Add Category"
+                description="Create product categories"
+                icon="📂"
+                link="/admin/categories"
+                color="green"
+              />
+              <QuickActionCard
+                title="Store Settings"
+                description="Configure your store"
+                icon="⚙️"
+                link="/admin/settings"
+                color="gray"
+              />
+            </div>
+          </motion.div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Orders */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-neutral-900 rounded-xl border border-white/10 p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-white">Recent Orders</h3>
+                <Link
+                  to="/admin/orders"
+                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+                >
+                  View All →
+                </Link>
+              </div>
+
+              {recentOrders.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-3">📦</div>
+                  <p className="text-white/50 text-sm">No orders yet</p>
+                  <p className="text-white/30 text-xs mt-1">Orders will appear here once customers start shopping</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {recentOrders.slice(0, 5).map((order, index) => (
+                    <motion.div
+                      key={order._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center justify-between p-4 bg-neutral-800/60 rounded-lg hover:bg-neutral-800 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-950 rounded-full flex items-center justify-center">
+                          <span className="text-blue-400 font-semibold text-sm">
+                            {order.customer?.firstName?.[0]}{order.customer?.lastName?.[0]}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-medium text-white text-sm">
+                            {order.customer?.firstName} {order.customer?.lastName}
+                          </p>
+                          <p className="text-white/50 text-xs">{order.orderNumber}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-white text-sm">${order.totalPrice?.toFixed(2)}</p>
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.orderStatus)}`}>
+                          {order.orderStatus}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            {/* Order Status Overview */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="bg-neutral-900 rounded-xl border border-white/10 p-6"
+            >
+              <h3 className="text-lg font-semibold text-white mb-6">Order Status Overview</h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
+                    <span className="text-white/70">Pending</span>
+                  </div>
+                  <span className="font-semibold text-white">{stats?.pendingOrders || 0}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-blue-400 rounded-full"></div>
+                    <span className="text-white/70">Processing</span>
+                  </div>
+                  <span className="font-semibold text-white">{stats?.processingOrders || 0}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-purple-400 rounded-full"></div>
+                    <span className="text-white/70">Shipped</span>
+                  </div>
+                  <span className="font-semibold text-white">{stats?.shippedOrders || 0}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-green-400 rounded-full"></div>
+                    <span className="text-white/70">Delivered</span>
+                  </div>
+                  <span className="font-semibold text-white">{stats?.deliveredOrders || 0}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 bg-red-400 rounded-full"></div>
+                    <span className="text-white/70">Cancelled</span>
+                  </div>
+                  <span className="font-semibold text-white">{stats?.cancelledOrders || 0}</span>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-white/10">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-white/60">Success Rate</span>
+                  <span className="font-semibold text-green-400">
+                    {stats?.totalOrders > 0
+                      ? Math.round(((stats.deliveredOrders || 0) / stats.totalOrders) * 100)
+                      : 0
+                    }%
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Activity Feed */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="mt-6 bg-neutral-900 rounded-xl border border-white/10 p-6"
+          >
+            <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span className="text-white/60">Dashboard loaded successfully</span>
+                <span className="text-white/30 ml-auto">Just now</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <span className="text-white/60">Order statistics updated</span>
+                <span className="text-white/30 ml-auto">2 min ago</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                <span className="text-white/60">System health check passed</span>
+                <span className="text-white/30 ml-auto">5 min ago</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default AdminDashboard

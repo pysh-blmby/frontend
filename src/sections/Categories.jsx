@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Categories = ({ categoriesData }) => {
   const categories = categoriesData?.categories || [];
@@ -19,15 +20,19 @@ const Categories = ({ categoriesData }) => {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <div
+          {categories.map((category, index) => (
+            <Link
               key={category._id}
-              className="group relative rounded-xl overflow-hidden cursor-pointer bg-zinc-900"
+              to={`/category/${category.name.toLowerCase()}`}
+              className="group relative rounded-xl overflow-hidden cursor-pointer bg-zinc-900 block"
             >
               {/* Image */}
               <img
                 src={category.image}
                 alt={category.name}
+                loading={index < 2 ? "eager" : "lazy"}
+                fetchPriority={index < 2 ? "high" : "auto"}
+                decoding="async"
                 className="w-full h-65 object-cover transform group-hover:scale-105 transition duration-500"
               />
 
@@ -37,7 +42,7 @@ const Categories = ({ categoriesData }) => {
                   {category.name}
                 </h3>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

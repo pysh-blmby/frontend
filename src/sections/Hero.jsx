@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const Hero = ({ heroData }) => {
   const [current, setCurrent] = useState(0);
-  const [images, setImages] = useState(heroData?.images || []);
-
-  useEffect(() => {
-    setImages(heroData?.images || []);
-  }, [heroData]);
+  const images = heroData?.images || [];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -24,6 +20,8 @@ const Hero = ({ heroData }) => {
           key={index}
           src={img}
           alt={`slide-${index}`}
+          loading={index === 0 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : "auto"}
           className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             index === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}

@@ -23,15 +23,15 @@ const FeaturedProducts = ({ products }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {productList.map((product) => (
             <Link
-              to={`/products/${product._id || product.id}`}
-              key={product._id || product.id}
+              to={`/product/${product._id}`}
+              key={product._id}
               className="bg-zinc-900 rounded-xl overflow-hidden group cursor-pointer block"
             >
               {/* Product Image */}
               <div className="overflow-hidden">
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={product.images?.[0] || "/placeholder.jpg"}
+                  alt={product.title}
                   className="w-full h-64 object-cover transform group-hover:scale-105 transition duration-500"
                 />
               </div>
@@ -39,14 +39,14 @@ const FeaturedProducts = ({ products }) => {
               {/* Product Info */}
               <div className="p-5">
                 <h3 className="text-lg font-medium mb-2">
-                  {product.name}
+                  {product.title}
                 </h3>
                 <p className="text-zinc-400 mb-4">
                   ₹{product.price}
                 </p>
 
                 <button className="w-full bg-white text-black py-2 rounded-md text-sm font-medium hover:bg-zinc-200 transition">
-                  Add to Cart
+                  View Details
                 </button>
               </div>
             </Link>
